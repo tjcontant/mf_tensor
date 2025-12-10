@@ -27,6 +27,7 @@ This workflow is designed for testing and comparing the tensor-based MF-GP metho
 
 2.  **Run Emulation Functions:**
     * Execute the scripts for the different emulation methods, all of which use the generated data from step 1.
+    
     | Emulation Method | Description | Script |
     | :--- | :--- | :--- |
     | **Tensor-LF** | Low-Fidelity Tensor GP | `simulation/lf-tensor.R` |
