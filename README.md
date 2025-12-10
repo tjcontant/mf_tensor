@@ -64,6 +64,7 @@ This workflow applies the developed tensor-based MF-GP methods to real-world out
 
 2.  **Run Emulation Functions (LOO Cross-Validation):**
     * Execute the scripts for the different emulation methods. These scripts are set up to run the LOO procedure.
+    
     | Emulation Method | Script |
     | :--- | :--- |
     | **Tensor-LF** | `mpas/mpas-lf-tensor.R` |
