@@ -22,6 +22,8 @@ shubert <- Vectorize(function(s1, s2, m, y, d1, d2, start, end) {
   return(y)
 })
 
+scale_values <- function(x){(x-min(x))/(max(x)-min(x))}
+
 
 # ------------------------------------------------------------------------------
 # INTERPOLATION FUNCTION
@@ -35,6 +37,7 @@ interpolate_locations <- function(coords_from, outputs, coords_to, k) {
   )
   return(knn_result$pred)
 }
+
 
 # ------------------------------------------------------------------------------
 # UNIFIED MULTI-DESIGN SIMULATION FUNCTION
@@ -79,7 +82,8 @@ simulate_for_design <- function(design, coord_lf, coord_hf,
       
       # LF field
       M_lf[, mo, yr] <- shubert(coord_lf$x, coord_lf$y, mo_cyclic, yr, a, b, 
-                                start = start_lf, end = end_lf)
+                                start = start_lf, end = end_lf) |>
+        scale_values() + (1/5) * yr
       
       # Interpolate LF to HF grid
       M_interp[, mo, yr] <- interpolate_locations(coord_lf, M_lf[, mo, yr], coord_hf, k = k_interp)
@@ -87,7 +91,9 @@ simulate_for_design <- function(design, coord_lf, coord_hf,
       # Discrepancy
       sigma_val <- 1 + 0.1 * sin(mo_cyclic) + 0.1 * yr
       Sigma <- sigma_val * diag(2)
-      M_disc[, mo, yr] <- 4500 * dmvnorm(coord_hf, mean = 0.5 * c(a, b), sigma = Sigma)
+      
+      M_disc[, mo, yr] <- dmvnorm(coord_hf, mean = 0.5 * c(a, b), sigma = Sigma) |>
+        scale_values() * 0.25 + 1
       
       # HF field
       M_hf[, mo, yr] <- M_disc[, mo, yr] + M_interp[, mo, yr]
@@ -172,6 +178,7 @@ dev.off()
 plot(design[runs_lf, c(1, 3)], main = "Design: LF (black) and HF (red)")
 points(design[runs_hf, c(1, 3)], col = "red", pch = 16)
 text(design[runs_hf, ], labels = runs_hf, pos = 3, col = "red", cex = 0.8)
+
 
 # ------------------------------------------------------------------------------
 # FINAL OUTPUTS
